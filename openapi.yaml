@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  version: 0.0.1
+  title: (AOS 2023) Entrega diario en taller
+  description: API REST para la gestión del trabajo diario en un taller de coches. 
+               Planificar recursos que se van a usar a diario, en plan, discos de freno de modelos
+               en concreto y toda esa mierda. Mirar info en https://www.euroinnova.gq/blog/actividades-que-se-realizan-en-un-taller-mecanico-automotriz
+servers:
+- url: http://127.0.0.1:80/api/v1
+tags:
+  - name: Tag1
+    description: Descripción tag 1
+paths:
+  /loquesea:
+    get:
+      summary: Obtiene todas las cosas
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code | Descripción | Motivo                             |
+        | ------------| ------------| -----------------------------------|
+        | **200**     | OK          | Listado de cosas             |
+        | **404**     | NOT FOUND   | No hay ninguna cosa          |
+      operationId: cosa_cget
+      tags: [Tag1]
+      responses:
+        '200':
+          description: Lista de cosas disponibles
+        '404':
+          description: Error, bien
