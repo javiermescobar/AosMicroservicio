@@ -2,29 +2,372 @@ openapi: 3.0.3
 info:
   version: 0.0.1
   title: (AOS 2023) Entrega diario en taller
-  description: API REST para la gestión del trabajo diario en un taller de coches. 
-               Planificar recursos que se van a usar a diario, en plan, discos de freno de modelos
-               en concreto y toda esa mierda. Mirar info en https://www.euroinnova.gq/blog/actividades-que-se-realizan-en-un-taller-mecanico-automotriz
+  description: API REST para la gestión de los trabajos que se realizan a diario en un taller.
 servers:
 - url: http://127.0.0.1:80/api/v1
 tags:
-  - name: Tag1
-    description: Descripción tag 1
+  - name: Tipos de trabajo
+    description: Los diferentes tipos de trabajos que se pueden realizar.
+  - name: Trabajo diario
+    description: Los trabajos que se pueden realizar a diario en el taller, un trabajo diario corresponde a un tipo de trabajo.
 paths:
-  /loquesea:
+  /activityTypes:
     get:
-      summary: Obtiene todas las cosas
+      summary: Obtiene todos los tipos de trabajos existentes.
+      description: |
+          La siguiente tabla define los códigos de estado que puede devolver este endpoint
+          (suponer que hay tabla, lol)
+          **200** -> OK -> Listado de tipos de trabajo |
+          **404** -> NOT_FOUND -> No se encuentra el listado de tipos de trabajo |
+      operationId: activityTypes_cget
+      tags: [Tipos de trabajo]
+      responses:
+        '200':
+          description: Listado de tipos de trabajo disponibles.
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tiposTrabajo:
+                    description: array de tipos de trabajo
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TipoTrabajo'
+              examples:
+                tiposTrabajo-examples:
+                  $ref: '#/components/examples/tiposTrabajo-examples'
+        '404':
+          $ref: '#/components/responses/Response_404'
+    options:
+      summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
+      operationId: plataforma_coptions
+      tags: [Tipos de trabajo]
+      responses:
+        '204':
+          description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+    post:
+      summary: Añade un nuevo tipo de trabajo
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code | Descripción          | Motivo                                    |
+        | ------------| ---------------------| ------------------------------------------|
+        | **201**     | CREATED              | El tipo de trabajo ha sido creado              |
+        | **400**     | BAD REQUEST          | El identificador único ya existe          |
+        | **422**     | UNPROCESSABLE ENTITY | Falta alguno de los atributos obligatorios|
+        |             |                      | o el valor no está permitido              |
+      tags: [Tipos de trabajo]
+      operationId: plataforma_post
+      requestBody:
+        $ref: '#/components/requestBodies/tipoTrabajoRB'
+      responses:
+        '201':
+          description: Nueva Plataforma creada
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TipoTrabajo'
+        '400':
+          $ref: '#/components/responses/Response_400'
+        '422':
+          $ref: '#/components/responses/Response_422'
+  
+  /activityTypes/{IdTipoActividad}:
+    parameters:
+      - $ref: '#/components/parameters/IdTipoTrabajo'
+    options:
+      summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
+      operationId: plataforma_options
+      tags: [Tipos trabajo]
+      responses:
+        '204':
+          description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+    get:
+      summary: Obtiene el tipo de trabajo identificado por `IdTipoActividad`.
       description: |
         La siguiente tabla define los códigos de estado que puede devolver este endpoint
         
         | Status Code | Descripción | Motivo                             |
         | ------------| ------------| -----------------------------------|
-        | **200**     | OK          | Listado de cosas             |
-        | **404**     | NOT FOUND   | No hay ninguna cosa          |
-      operationId: cosa_cget
-      tags: [Tag1]
+        | **200**     | OK          | Si el tipo de trabajo existe           |
+        | **404**     | NOT FOUND   | Si el tipo de trabajo no existe         |
+      operationId: tipoTrabajo_cget
+      tags: [Tipo trabajo]
       responses:
         '200':
-          description: Lista de cosas disponibles
+          description: Plataforma
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TipoTrabajo'
         '404':
-          description: Error, bien
+          $ref: '#/components/responses/Response_404'
+    delete:
+      summary: Elimina el tipo de trabajo identificado por `IdTipoTrabajo`.
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code      | Descripción | Motivo                                    |
+        | ---------------- | ------------| ------------------------------------------|
+        | **204**          | NO CONTENT  | El tipo de trabajo existía y ha sido eliminado |
+        | **404**          | NOT FOUND   | Si el tipo de trabajo no existe                |
+      operationId: tipoTrabajo_delete
+      tags: [Tipo trabajo]
+      responses:
+        '204':
+          description: Tipo de trabajo eliminado &lt;Cuerpo de la respuesta vacío&gt;
+        '404':
+          $ref: '#/components/responses/Response_404'
+    put:
+      tags: [Tipo de trabajo]
+      summary: Modifica el tipo de trabajo identificado por `IdTipoTrabajo`.
+      description:  |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        | Status Code | Descripción         | Motivo                                        |
+        | ------------| --------------------| ----------------------------------------------|
+        | **209**     | CONTENT RETURNED    | El tipo de trabajo existe y ha sido modificado   |
+        | **404**     | NOT FOUND           | Si el tipo de trabajo no existe                   |
+        | **412**     | PRECONDITION FAILED | Si el ETag proporcionado no está actualizado  |
+        | **422**     | UNPROCESSABLE ENTITY| Valor no permitido en alguno de los attributos|
+      operationId: plataforma_put
+      parameters:
+        - $ref: '#/components/parameters/ifMatchParam'
+      requestBody:
+        $ref: '#/components/requestBodies/tipoTrabajoUpdate'
+      responses:
+        '209':
+          description: '`CONTENT RETURNED`: El tipo de trabajo ha sido actualizado'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TipoTrabajo'
+        '404':
+          $ref: '#/components/responses/Response_404'
+        '412':
+          $ref: '#/components/responses/Response_412'
+        '422':
+          $ref: '#/components/responses/Response_422'
+
+
+components:
+  schemas:
+    TipoTrabajo:
+      title: Tipo de trabajo
+      description: >
+        Tipo de trabajo realizado en un taller que puede ser realizado para 
+        cierto tipo de vehículos. 
+      type: object
+      properties:
+        tipoTrabajo:
+          type: object
+          required: [IdTipoTrabajo]
+          properties:
+            IdTipoTrabajo:
+              $ref: '#/components/schemas/IdTipoTrabajo'
+            NombreTrabajo:
+              $ref: '#/components/schemas/NombreTrabajo'
+            DescripcionTrabajo:
+              $ref: '#/components/schemas/DescripcionTrabajo'
+          example: { "tipoTrabajo" : { "IdTipoTrabajo": "0991",
+                                 "NombreTrabajo": "Revisión de fluídos", 
+                                 "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc"}}
+
+    IdTipoTrabajo:
+      title: Identificador del tipo de trabajo.
+    
+    NombreTrabajo:
+      title: Nombre descriptivo del tipo de trabajo.
+
+    DescripcionTrabajo:
+      title: Descripción detallada del tipo de trabajo.
+
+    HTTP_Problem:
+      type: object
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7807
+      description: |
+        Problem Details for HTTP APIs
+        [https://tools.ietf.org/html/rfc7807](https://tools.ietf.org/html/rfc7807)
+      properties:
+        type:
+          type: string
+          format: uri
+          description: A URI reference [RFC3986] that identifies the problem type
+        title:
+          type: string
+          description: short human-readable summary of the problem type
+        status:
+          type: number
+          description: HTTP status code
+        detail:
+          type: string
+          description: Human-readable explanation specific to this occurrence of the problem
+        instance:
+          type: string
+          format: uri
+          description: >
+            A URI reference that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.  
+  
+  headers:
+    ETag:
+      description: "Entity Tag (identificador único proporcionado para validación de caché)"
+      schema:
+        type: string
+        pattern: "[0-9a-f]"
+        example: 21a6712f551bd25fae
+    Allow:
+      description: Lista de métodos HTTP soportados
+      schema:
+        type: string
+      example: GET, DELETE, PUT, OPTIONS
+    Location:
+      description: '`URI` del nuevo recurso'
+      schema:
+        type: string
+        format: uri
+        x-faker: internet.url
+        example:
+          https://example.com/api/v1/tiposTrabajo/0991
+
+  examples:
+    tiposTrabajo-examples:
+      value:
+        - { "tipoTrabajo" : { "IdTipoTrabajo": "0991",
+                                 "NombreTrabajo": "Revisión de fluídos", 
+                                 "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc"}}
+        - { "tipoTrabajo" : { "IdTipoTrabajo": "0992",
+                                 "NombreTrabajo": "Limpieza de motor", 
+                                 "DescripcionTrabajo": "Limpieza interna y externa del motor"}}
+    response-http-400:
+      value:
+        type: https://httpstatuses.com/400
+        title: UNPROCESSABLE ENTITY
+        status: 400
+        detail: El identificador único ya existe
+        instance: about:blank
+    response-http-404:
+      value:
+        type: https://httpstatuses.com/404
+        title: NOT FOUND
+        status: 404
+        detail: El recurso solicitado no está disponible.
+        instance: about:blank
+    response-http-412:
+      value:
+        type: https://httpstatuses.com/412
+        title: PRECONDITION FAILED
+        status: 412
+        detail: El ETag proporcionado no está actualizado
+        instance: about:blank
+    response-http-422:
+      value:
+        type: https://httpstatuses.com/422
+        title: UNPROCESSABLE ENTITY
+        status: 422
+        detail: Falta alguno de los atributos obligatorios o contiene un valor no admitido
+        instance: about:blank
+
+
+  responses:
+    Response_400:
+      description: '`BAD REQUEST` El identificador único ya existe.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-400:
+              $ref: '#/components/examples/response-http-400'
+    Response_404:
+      description: '`NOT FOUND`: Recurso no disponible'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-404:
+              $ref: '#/components/examples/response-http-404'
+    Response_412:
+      description: '`PRECONDITION FAILED`: El ETag proporcionado no está actualizado'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-412:
+              $ref: '#/components/examples/response-http-412'
+    Response_422:
+      description: '`UNPROCESSABLE ENTITY` Falta alguno de los atributos obligatorios o son incorrectos.'
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-422:
+              $ref: '#/components/examples/response-http-422'
+
+  requestBodies:
+    tipoTrabajoRB:
+      description: Información de nuevo tipo de trabajo
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [IdTipoTrabajo, NombreTrabajo, DescripcionTrabajo]
+            properties:
+              IdTipoTrabajo:
+                $ref: '#/components/schemas/IdTipoTrabajo'
+              NombreTrabajo:
+                $ref: '#/components/schemas/NombreTrabajo'
+              DescripcionTrabajo:
+                $ref: '#/components/schemas/DescripcionTrabajo'
+    tipoTrabajoUpdate:
+      description: Nuevos atributos del tipo de trabajo
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              NombreTrabajo:
+                $ref: '#/components/schemas/NombreTrabajo'
+              DescripcionTrabajo:
+                $ref: '#/components/schemas/DescripcionTrabajo'
+          example: { "NombreTrabajo": "Nuevo nombre de tipo de trabajo", "DescripcionTrabajo": "Nueva descripcion de tipo de trabajo" }
+  
+  parameters:
+    IdTipoTrabajo:
+      name: plataforma_id
+      in: path
+      description: Identificador único de la Plataforma
+      required: true
+      schema:
+        $ref: '#/components/schemas/IdTipoTrabajo'
+    ifMatchParam:
+      name: If-Match
+      in: header
+      description: ETag actual del recurso que se desea modificar
+      required: true
+      schema:
+        type: string
+        pattern: "[0-9a-f]*"
