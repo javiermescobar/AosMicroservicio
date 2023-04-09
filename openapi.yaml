@@ -90,7 +90,7 @@ paths:
       summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
       description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
       operationId: plataforma_options
-      tags: [Tipos trabajo]
+      tags: [Tipos de trabajo]
       responses:
         '204':
           description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
@@ -107,7 +107,7 @@ paths:
         | **200**     | OK          | Si el tipo de trabajo existe           |
         | **404**     | NOT FOUND   | Si el tipo de trabajo no existe         |
       operationId: tipoTrabajo_cget
-      tags: [Tipo trabajo]
+      tags: [Tipos de trabajo]
       responses:
         '200':
           description: Plataforma
@@ -130,14 +130,14 @@ paths:
         | **204**          | NO CONTENT  | El tipo de trabajo existía y ha sido eliminado |
         | **404**          | NOT FOUND   | Si el tipo de trabajo no existe                |
       operationId: tipoTrabajo_delete
-      tags: [Tipo trabajo]
+      tags: [Tipos de trabajo]
       responses:
         '204':
           description: Tipo de trabajo eliminado &lt;Cuerpo de la respuesta vacío&gt;
         '404':
           $ref: '#/components/responses/Response_404'
     put:
-      tags: [Tipo de trabajo]
+      tags: [Tipos de trabajo]
       summary: Modifica el tipo de trabajo identificado por `IdTipoTrabajo`.
       description:  |
         La siguiente tabla define los códigos de estado que puede devolver este endpoint
@@ -166,6 +166,43 @@ paths:
         '422':
           $ref: '#/components/responses/Response_422'
 
+  /carActivities{CarVIN}:
+    parameters:
+      - $ref: "#/components/parameters/CarVIN"
+    options:
+      summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
+      operationId: car_activities_options
+      tags: [Trabajo diario]
+      responses:
+        '204':
+          description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+    get:
+      summary: Obtiene los trabajos asociados al vehículo identificado por `CarVIN`.
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code | Descripción | Motivo                             |
+        | ------------| ------------| -----------------------------------|
+        | **200**     | OK          | Si el vehículo existe            |
+        | **404**     | NOT FOUND   | Si no existe el vehículo        |
+      operationId: car_activities_cget
+      tags: [Trabajo diario]
+      responses:
+        '200':
+          description: Trabajo diario
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrabajoDiario'
+        '404':
+          $ref: '#/components/responses/Response_404'
 
 components:
   schemas:
@@ -178,7 +215,7 @@ components:
       properties:
         tipoTrabajo:
           type: object
-          required: [IdTipoTrabajo]
+          required: [IdTipoTrabajo, NombreTrabajo, DescripcionTrabajo]
           properties:
             IdTipoTrabajo:
               $ref: '#/components/schemas/IdTipoTrabajo'
@@ -190,13 +227,98 @@ components:
                                  "NombreTrabajo": "Revisión de fluídos", 
                                  "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc"}}
 
+    TrabajoDiario:
+      title: Trabajo diario
+      description: >
+        Trabajo realizado a un vehículo en específico. Pertenece a un tipo de trabajo
+      type: object
+      properties:
+        trabajoDiario:
+          type: object
+          required: [IdTrabajoDiario, IdTipoTrabajo, NombreTrabajo, DescripcionTrabajo,
+                      MotivoTrabajo, FechaInicio, HorasDedicadas, FechaFin,
+                      RecursosNecesarios, EstadoTrabajo, VINCoche]
+          properties:
+            IdTrabajoDiario:
+              $ref: '#/components/schemas/IdTrabajoDiario'
+            IdTipoTrabajo:
+              $ref: '#/components/schemas/IdTipoTrabajo'
+            NombreTrabajo:
+              $ref: '#/components/schemas/NombreTrabajo'
+            DescripcionTrabajo:
+              $ref: '#/components/schemas/DescripcionTrabajo'
+            MotivoTrabajo:
+              $ref: '#/components/schemas/MotivoTrabajo'
+            FechaInicio:
+              $ref: '#/components/schemas/FechaInicio'
+            HorasDedicadas:
+              $ref: '#/components/schemas/HorasDedicadas'
+            FechaFin:
+              $ref: '#/components/schemas/FechaFin'
+            RecursosNecesarios:
+              $ref: '#/components/schemas/RecursosNecesarios'
+            EstadoTrabajo:
+              $ref: '#/components/schemas/EstadoTrabajo'
+            VINCoche:
+              $ref: '#/components/schemas/VINCoche'
+          example: { "tipoTrabajo" : { "IdTrabajoDiario": "123",
+                                 "IdTipoTrabajo": "0991",
+                                 "NombreTrabajo": "Revisión de fluídos", 
+                                 "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc",
+                                 "MotivoTrabajo": "El cliente alega que su vehículo muestra un indicador en su testigo de anomalía en el nivel de aceite",
+                                 "FechaInicio": "09/03/2023",
+                                 "HorasDedicadas": "2.5",
+                                 "FechaFin": "10/03/2023",
+                                 "RecursosNecesarios": {
+                                                          "IdRecurso1": "214123",
+                                                          "IdRecurso2": "3123"},
+                                 "EstadoTrabajo": "FINALIZADO",
+                                 "VINCoche": "MNCLSFE405W491230"}}
+
+    IdTrabajoDiario:
+      type: number
+      title: Identificador de un trabajo diario.
+
+    MotivoTrabajo:
+      type: string
+      title: Descripción del motivo de realización del trabajo.
+
+    FechaInicio:
+      type: string
+      title: Fecha de entrega del vehículo al taller. Marca el comienzo del trabajo.
+
+    HorasDedicadas:
+      type: number
+      title: Horas dedicadas al trabajo para acabarlo.
+
+    FechaFin:
+      type: string
+      title: Fecha de entrega del vehículo al propietario. Marca la finalización del trabajo.
+
+    RecursosNecesarios:
+      type: array
+      title: Array de identificadores de los recursos necesarios para realizar el trabajo.
+
+    EstadoTrabajo:
+      type: string
+      title: Estado actual del trabajo.
+      enum: [CREADO, PLANIFICADO, INICIADO, TERMINADO]
+
+    VINCoche:
+      title: Identificador de vehículo
+      type: string
+      pattern: "[0-9A-HJ-RP-Z]"
+
     IdTipoTrabajo:
+      type: number
       title: Identificador del tipo de trabajo.
     
     NombreTrabajo:
+      type: string
       title: Nombre descriptivo del tipo de trabajo.
 
     DescripcionTrabajo:
+      type: string
       title: Descripción detallada del tipo de trabajo.
 
     HTTP_Problem:
@@ -371,3 +493,10 @@ components:
       schema:
         type: string
         pattern: "[0-9a-f]*"
+    CarVIN:
+      name: CarVIN
+      in: path
+      description: Idetificador de un vehículo
+      required: true
+      schema:
+        $ref: '#/components/schemas/VINCoche'
