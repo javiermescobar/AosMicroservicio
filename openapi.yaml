@@ -357,6 +357,46 @@ paths:
           description: Trabajo diario borrado con éxito &lt;Cuerpo de la respuesta vacío&gt;
         '404':
           $ref: '#/components/responses/Response_404'
+  /TrabajoDiarioEstados{EstadoTrabajo}:
+    parameters:
+      - $ref: '#/components/parameters/EstadoTrabajo'
+    options:
+      summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
+      operationId: trabajoDiarioEstado_options
+      tags: [Trabajo diario]
+      responses:
+        '204':
+          description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+    get:
+      summary: Obtiene los trabajos con un tipo de 'EstadoTrabajo'
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code | Descripción | Motivo                                |
+        | ------------| ------------| --------------------------------------|
+        | **200**     | OK          | Si existen trabajos con dicho estado  |
+        | **404**     | NOT FOUND   | Si no existen trabajos con el estado  |
+      operationId: trabajoDiarioEstado_cget
+      tags: [Trabajo diario]
+      responses:
+        '200':
+          description: Lista de trabajos con dicho estado
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrabajoDiario'
+        '404':
+          $ref: '#/components/responses/Response_404'
+        
 components:
   schemas:
     TipoTrabajo:
@@ -746,3 +786,10 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/IdTrabajoDiario'
+    EstadoTrabajo:
+      name: EstadoTrabajo_tipo
+      in: path
+      description: Tipo del trabajo de uno o varios trabajos diarios
+      required: true
+      schema:
+        $ref: '#/components/schemas/EstadoTrabajo'
