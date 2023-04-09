@@ -58,6 +58,9 @@ api/v1/activiyStates{ActivityState}:
 	-OPTIONS -> Todas las operaciones posibles HTTP para este path
 	-GET -> Obtiene las actividades que tengan su estado de trabajo asociado al valor ActivityState
 
+api/v1/resourcesUsed{IdRecurso} :
+	-OPTIONS -> Todas las operaciones HTTP posibles para este path
+	-GET -> Obtiene todas las actividades donde se utiliza dicho recurso con IdRecurso
 
 
 —------------------
@@ -80,3 +83,6 @@ Un trabajo tiene un motivo de dicho trabajo, para poder llevar una trazabilidad 
 
 		-FechaInicio:Date, FechaFin: Date, HorasDedicadas: Float
 Una actividad diaria comienza cuando el vehículo es dejado en el taller, y terminará una vez el cliente recoja dicho vehículo. Pero serán las horas dedicadas las que marquen el tiempo que ha sido necesario para completar la actividad.
+
+        -No uso de ClienteId
+No debería conocer el taller el ClienteId ya que sólo trabaja con coches, de la misma manera que no conoce a los proveedores de los recursos, solo a los recursos. Para poder facilitar las notificaciones ya se ha creado un endpoint que facilita la información de todas las actividades de un coche, dado el VIN.

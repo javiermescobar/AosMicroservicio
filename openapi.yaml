@@ -45,7 +45,7 @@ paths:
     options:
       summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
       description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
-      operationId: plataforma_coptions
+      operationId: tipoTrabajos_coptions
       tags: [Tipos de trabajo]
       responses:
         '204':
@@ -65,12 +65,12 @@ paths:
         | **422**     | UNPROCESSABLE ENTITY | Falta alguno de los atributos obligatorios|
         |             |                      | o el valor no está permitido              |
       tags: [Tipos de trabajo]
-      operationId: plataforma_post
+      operationId: TipoTrabajos_post
       requestBody:
         $ref: '#/components/requestBodies/tipoTrabajoRB'
       responses:
         '201':
-          description: Nueva Plataforma creada
+          description: Nuevo tipo de trabajo creado
           headers:
             Location:
               $ref: '#/components/headers/Location'
@@ -89,7 +89,7 @@ paths:
     options:
       summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
       description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
-      operationId: plataforma_options
+      operationId: tipoTrabajo_options
       tags: [Tipos de trabajo]
       responses:
         '204':
@@ -110,7 +110,7 @@ paths:
       tags: [Tipos de trabajo]
       responses:
         '200':
-          description: Plataforma
+          description: Lista de trabajos existentes
           headers:
             ETag:
               $ref: '#/components/headers/ETag'
@@ -143,11 +143,11 @@ paths:
         La siguiente tabla define los códigos de estado que puede devolver este endpoint
         | Status Code | Descripción         | Motivo                                        |
         | ------------| --------------------| ----------------------------------------------|
-        | **209**     | CONTENT RETURNED    | El tipo de trabajo existe y ha sido modificado   |
-        | **404**     | NOT FOUND           | Si el tipo de trabajo no existe                   |
+        | **209**     | CONTENT RETURNED    | El tipo de trabajo existe y ha sido modificado|
+        | **404**     | NOT FOUND           | Si el tipo de trabajo no existe               |
         | **412**     | PRECONDITION FAILED | Si el ETag proporcionado no está actualizado  |
         | **422**     | UNPROCESSABLE ENTITY| Valor no permitido en alguno de los attributos|
-      operationId: plataforma_put
+      operationId: tipoTrabajo_put
       parameters:
         - $ref: '#/components/parameters/ifMatchParam'
       requestBody:
@@ -166,7 +166,76 @@ paths:
         '422':
           $ref: '#/components/responses/Response_422'
 
-  /carActivities{CarVIN}:
+  /TrabajoDiario:
+    options:
+      summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
+      operationId: activity_coptions
+      tags: [Trabajo diario]
+      responses:
+        '204':
+          description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+    get:
+      summary: Obtiene todos las actividades existentes.
+      description: |
+        Una actividad es un tipo de trabajo en concreto, aplicado a un coche, y realizado en fechas concretas.
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code | Descripción | Motivo                             |
+        | ------------| ------------| -----------------------------------|
+        | **200**     | OK          | Listado de actividades diarias     |
+        | **404**     | NOT FOUND   | No hay ninguna actividad           |
+      operationId: activities_cget
+      tags: [Trabajo diario]
+      responses:
+        '200':
+          description: 'Listado de recursos obtenidos con éxito'
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrabajoDiario'
+        '404':
+          $ref: '#/components/responses/Response_404'
+    post:
+      summary: Añade un nuevo trabajo diario
+      description: |
+        Se añade un nuevo trabajo diario a realizar sobre un coche.
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+
+        | Status Code | Descripción          | Motivo                                    |
+        | ------------| ---------------------| ------------------------------------------|
+        | **201**     | CREATED              | El trabajo diario ha sido creado          |
+        | **400**     | BAD REQUEST          | El identificador único ya existe          |
+        | **422**     | UNPROCESSABLE ENTITY | Falta alguno de los atributos obligatorios|
+        |             |                      | o el valor no está permitido              |
+      operationId: activities_post
+      tags: [Trabajo diario]
+      requestBody:
+        $ref: '#/components/requestBodies/trabajoDiario'
+      responses:
+        '201':
+          description: Nueva actividad diaria creada con éxito
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrabajoDiario'
+        '400':
+          $ref: '#/components/responses/Response_400'
+        '422':
+          $ref: '#/components/responses/Response_422'
+
+  /TrabajosSegunCoche{CarVIN}:
     parameters:
       - $ref: "#/components/parameters/CarVIN"
     options:
@@ -200,10 +269,94 @@ paths:
           content:
             application/json:
               schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrabajoDiario'
+        '404':
+          $ref: '#/components/responses/Response_404'
+  /TrabajoDiario{IdTrabajoDiario}:
+    parameters:
+      - $ref: "#/components/parameters/IdTrabajoDiario"
+    options:
+      summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
+      operationId: activity_coptions
+      tags: [Trabajo diario]
+      responses:
+        '204':
+          description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+    get:
+      summary: Obtiene un trabajo diario identificado por un 'IdTrabajoDiario'
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code | Descripción | Motivo                             |
+        | ------------| ------------| -----------------------------------|
+        | **200**     | OK          | Si el trabajo diario existe        |
+        | **404**     | NOT FOUND   | Si no existe el trabajo diario     |
+      operationId: activities_get
+      tags: [Trabajo diario]
+      responses:
+        '200':
+          description: Definición de un Trabajo diario
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
                 $ref: '#/components/schemas/TrabajoDiario'
         '404':
           $ref: '#/components/responses/Response_404'
+    put:
+      summary: Modifica el trabajo diario identificado por un 'IdTrabajoDiario'
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
 
+        | Status Code | Descripción         | Motivo                                          |
+        | ------------| --------------------| ------------------------------------------------|
+        | **209**     | CONTENT RETURNED    | El trabajo diario existía y ha sido actualizado |
+        | **404**     | NOT FOUND           | Si el trabajo diario no existe                  |
+        | **412**     | PRECONDITION FAILED | Si el ETag proporcionado no está actualizado    |
+        | **422**     | UNPROCESSABLE ENTITY| Valor no permitido en alguno de los attributos  |
+      operationId: activities_put
+      tags: [Trabajo diario]
+      parameters:
+        - $ref: '#/components/parameters/ifMatchParam'
+      requestBody:
+        $ref: '#/components/requestBodies/trabajoDiarioUpdate'
+      responses:
+        '209':
+          description: '`CONTENT RETURNED`: el trabajo diario ha sido actualizada'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrabajoDiario'
+        '404':
+          $ref: '#/components/responses/Response_404'
+        '412':
+          $ref: '#/components/responses/Response_412'
+        '422':
+          $ref: '#/components/responses/Response_422'
+    delete:
+      summary: Elimina el trabajo diario identificado po un 'IdTrabajoDiario'
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code      | Descripción | Motivo                                        |
+        | ---------------- | ------------| ----------------------------------------------|
+        | **204**          | NO CONTENT  | El trabajo diario existía y ha sido eliminado |
+        | **404**          | NOT FOUND   | Si el trabajo diario no existe                |
+      operationId: activities_delete
+      tags: [Trabajo diario]
+      responses:
+        '204':
+          description: Trabajo diario borrado con éxito &lt;Cuerpo de la respuesta vacío&gt;
+        '404':
+          $ref: '#/components/responses/Response_404'
 components:
   schemas:
     TipoTrabajo:
@@ -228,16 +381,23 @@ components:
                                  "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc"}}
 
     TrabajoDiario:
-      title: Trabajo diario
+      title: 'Actividad diaria en un taller 🔧'
       description: >
-        Trabajo realizado a un vehículo en específico. Pertenece a un tipo de trabajo
+        Una actividad diaria en el taller es todo aquel trabajo 
+        concreto que se realiza sobre un coche con determinado VIN y
+        con una fecha de inicio del trabajo, y una fecha de finalización.
+        Para una descripción más completa de la actividad también se contempla
+        el tiempo de dedicación (en horas) a dicho trabajo, tipo de trabajo,
+        descripción concreta del trabajo, motivo acusado por el cliente,
+        es decir, la razón por la que el cliente trae el coche al taller,
+        recursos necesarios para realizar la actividad...
       type: object
       properties:
         trabajoDiario:
           type: object
           required: [IdTrabajoDiario, IdTipoTrabajo, NombreTrabajo, DescripcionTrabajo,
-                      MotivoTrabajo, FechaInicio, HorasDedicadas, FechaFin,
-                      RecursosNecesarios, EstadoTrabajo, VINCoche]
+                      MotivoTrabajo, FechaInicio,RecursosNecesarios,
+                      EstadoTrabajo, VINCoche]
           properties:
             IdTrabajoDiario:
               $ref: '#/components/schemas/IdTrabajoDiario'
@@ -276,50 +436,79 @@ components:
                                  "VINCoche": "MNCLSFE405W491230"}}
 
     IdTrabajoDiario:
-      type: number
+      type: integer
+      format: int64
       title: Identificador de un trabajo diario.
+      description: 
+            Esta campo indica el identificador único para cada trabajo que se 
+            realiza en el taller
+      example: 12
 
     MotivoTrabajo:
       type: string
       title: Descripción del motivo de realización del trabajo.
+      description: 
+            Esta campo indica la razon por la que se trae el coche al taller.
+            También puede ser una descripción más extensa sobre la necesidad
+            de realizar dicho trabajo.
+      example: "El cliente acusa que las ruedas chirrian cuando se produce
+            un giro con el volante"
 
     FechaInicio:
       type: string
+      format: date-time
       title: Fecha de entrega del vehículo al taller. Marca el comienzo del trabajo.
+      description: Fecha de inicio de la actividad
+      example: "2023-04-09T09:30:42Z"
 
     HorasDedicadas:
       type: number
+      format: float
       title: Horas dedicadas al trabajo para acabarlo.
+      example: 5.1
 
     FechaFin:
       type: string
+      format: date-time
       title: Fecha de entrega del vehículo al propietario. Marca la finalización del trabajo.
+      description: Fecha de finalización de la actividad
+      example: "2023-04-12T09:30:42Z"
 
     RecursosNecesarios:
       type: array
+      items: 
+        type: integer
       title: Array de identificadores de los recursos necesarios para realizar el trabajo.
+      example: [3, 1212, 83]
 
     EstadoTrabajo:
       type: string
-      title: Estado actual del trabajo.
       enum: [CREADO, PLANIFICADO, INICIADO, TERMINADO]
+      title: Estado actual del trabajo.
 
     VINCoche:
-      title: Identificador de vehículo
       type: string
-      pattern: "[0-9A-HJ-RP-Z]"
+      pattern: "[a-zA-Z0-9]{9}[a-zA-Z0-9-]{2}[0-9]{6}"
+      title: Identificador de vehículo
+      description: El VIN es un identificador único del coche, teniendo un formato
+        que siguen todos los VIN, pudiendo identificar a cada coche.
+      example: "1HGBH41JXMN109186"
 
     IdTipoTrabajo:
-      type: number
+      type: integer
+      format: int64
       title: Identificador del tipo de trabajo.
+      example: 245
     
     NombreTrabajo:
       type: string
       title: Nombre descriptivo del tipo de trabajo.
+      example: Revision general
 
     DescripcionTrabajo:
       type: string
-      title: Descripción detallada del tipo de trabajo.
+      title: Descripción detallada del tipo de trabajo en concreto.
+      example: Revisión previa a un viaje de más de 400km.
 
     HTTP_Problem:
       type: object
@@ -347,8 +536,7 @@ components:
           format: uri
           description: >
             A URI reference that identifies the specific occurrence of the problem.
-            It may or may not yield further information if dereferenced.  
-  
+            It may or may not yield further information if dereferenced.      
   headers:
     ETag:
       description: "Entity Tag (identificador único proporcionado para validación de caché)"
@@ -476,12 +664,63 @@ components:
               DescripcionTrabajo:
                 $ref: '#/components/schemas/DescripcionTrabajo'
           example: { "NombreTrabajo": "Nuevo nombre de tipo de trabajo", "DescripcionTrabajo": "Nueva descripcion de tipo de trabajo" }
-  
+    trabajoDiario:
+      description: Nuevo trabajo a realizar por el taller
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              TrabajoDiario:
+                $ref: '#/components/schemas/TrabajoDiario'
+    trabajoDiarioUpdate:
+      description: Nuevos atributos del trabajo diario
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              FechaInicio:
+                type: string
+                format: date-time
+                title: Fecha de entrega del vehículo al taller. Marca el comienzo del trabajo.
+                description: Fecha de inicio de la actividad
+                example: "2023-04-09T09:30:42Z"
+
+              HorasDedicadas:
+                type: number
+                format: float
+                title: Horas dedicadas al trabajo para acabarlo.
+                example: 5.1
+
+              FechaFin:
+                type: string
+                format: date-time
+                title: Fecha de entrega del vehículo al propietario. Marca la finalización del trabajo.
+                description: Fecha de finalización de la actividad
+                example: "2023-04-12T09:30:42Z"
+
+              RecursosNecesarios:
+                type: array
+                items: 
+                  type: integer
+                title: Array de identificadores de los recursos necesarios para realizar el trabajo.
+                example: [3, 1212, 83]
+
+              EstadoTrabajo:
+                type: string
+                enum: [CREADO, PLANIFICADO, INICIADO, TERMINADO]
+                title: Estado actual del trabajo.
+                        
+              
+
   parameters:
     IdTipoTrabajo:
-      name: plataforma_id
+      name: tipoTrabajo_id
       in: path
-      description: Identificador único de la Plataforma
+      description: Identificador único del tipo de trabajo
       required: true
       schema:
         $ref: '#/components/schemas/IdTipoTrabajo'
@@ -500,3 +739,10 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/VINCoche'
+    IdTrabajoDiario:
+      name: trabajoDiario_id
+      in: path
+      description: Identificador único de un trabajo diario
+      required: true
+      schema:
+        $ref: '#/components/schemas/IdTrabajoDiario'
