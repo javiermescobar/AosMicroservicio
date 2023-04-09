@@ -147,7 +147,7 @@ paths:
         | **404**     | NOT FOUND           | Si el tipo de trabajo no existe               |
         | **412**     | PRECONDITION FAILED | Si el ETag proporcionado no está actualizado  |
         | **422**     | UNPROCESSABLE ENTITY| Valor no permitido en alguno de los attributos|
-      operationId: plataforma_put
+      operationId: tipoTrabajo_put
       parameters:
         - $ref: '#/components/parameters/ifMatchParam'
       requestBody:
@@ -592,9 +592,9 @@ components:
 
   parameters:
     IdTipoTrabajo:
-      name: plataforma_id
+      name: tipoTrabajo_id
       in: path
-      description: Identificador único de la Plataforma
+      description: Identificador único del tipo de trabajo
       required: true
       schema:
         $ref: '#/components/schemas/IdTipoTrabajo'
