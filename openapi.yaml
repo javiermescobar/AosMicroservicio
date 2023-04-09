@@ -45,7 +45,7 @@ paths:
     options:
       summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
       description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
-      operationId: plataforma_coptions
+      operationId: tipoTrabajos_coptions
       tags: [Tipos de trabajo]
       responses:
         '204':
@@ -65,12 +65,12 @@ paths:
         | **422**     | UNPROCESSABLE ENTITY | Falta alguno de los atributos obligatorios|
         |             |                      | o el valor no está permitido              |
       tags: [Tipos de trabajo]
-      operationId: plataforma_post
+      operationId: TipoTrabajos_post
       requestBody:
         $ref: '#/components/requestBodies/tipoTrabajoRB'
       responses:
         '201':
-          description: Nueva Plataforma creada
+          description: Nuevo tipo de trabajo creado
           headers:
             Location:
               $ref: '#/components/headers/Location'
@@ -89,7 +89,7 @@ paths:
     options:
       summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
       description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
-      operationId: plataforma_options
+      operationId: tipoTrabajo_options
       tags: [Tipos trabajo]
       responses:
         '204':
@@ -165,6 +165,73 @@ paths:
           $ref: '#/components/responses/Response_412'
         '422':
           $ref: '#/components/responses/Response_422'
+  /TrabajoDiario:
+    options:
+      summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
+      operationId: activity_coptions
+      tags: [Actividades diarias]
+      responses:
+        '204':
+          description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+    get:
+      summary: Obtiene todos las actividades existentes.
+      description: |
+        Una actividad es un tipo de trabajo en concreto, aplicado a un coche, y realizado en fechas concretas.
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code | Descripción | Motivo                             |
+        | ------------| ------------| -----------------------------------|
+        | **200**     | OK          | Listado de actividades diarias     |
+        | **404**     | NOT FOUND   | No hay ninguna actividad           |
+      operationId: activities_cget
+      tags: [Actividades diarias]
+      responses:
+        '200':
+          description: 'Listado de recursos obtenidos con éxito'
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrabajoDiario'
+        '404':
+          $ref: '#/components/responses/Response_404'
+    post:
+      summary: Añade un nuevo trabajo diario
+      description: |
+        Se añade un nuevo trabajo diario a realizar sobre un coche.
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+
+        | Status Code | Descripción          | Motivo                                    |
+        | ------------| ---------------------| ------------------------------------------|
+        | **201**     | CREATED              | El trabajo diario ha sido creado          |
+        | **400**     | BAD REQUEST          | El identificador único ya existe          |
+        | **422**     | UNPROCESSABLE ENTITY | Falta alguno de los atributos obligatorios|
+        |             |                      | o el valor no está permitido              |
+      operationId: activities_post
+      tags: [Actividades diarias]
+      requestBody:
+        $ref: '#/components/requestBodies/TrabajoDiario'
+      responses:
+        '201':
+          description: Nueva actividad diaria creada con éxito
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schemas:
+                $ref: '#/components/schemas/TrabajoDiario'
+        '400':
+          $ref: '#/components/responses/Response_400'
+        '422':
+          $ref: '#/components/responses/Response_422'
+
 
 
 components:
@@ -225,8 +292,7 @@ components:
           format: uri
           description: >
             A URI reference that identifies the specific occurrence of the problem.
-            It may or may not yield further information if dereferenced.  
-  
+            It may or may not yield further information if dereferenced.      
   headers:
     ETag:
       description: "Entity Tag (identificador único proporcionado para validación de caché)"
