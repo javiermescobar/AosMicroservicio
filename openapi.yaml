@@ -199,7 +199,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrabajoDiario'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrabajoDiario'
         '404':
           $ref: '#/components/responses/Response_404'
     post:
@@ -267,10 +269,93 @@ paths:
           content:
             application/json:
               schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrabajoDiario'
+        '404':
+          $ref: '#/components/responses/Response_404'
+  /TrabajoDiario{IdTrabajoDiario}:
+    parameters:
+      - $ref: "#/components/parameters/IdTrabajoDiario"
+    options:
+      summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
+      operationId: activity_coptions
+      tags: [Trabajo diario]
+      responses:
+        '204':
+          description: 'cabecera `Allow` &lt;El cuerpo de la respuesta está vacío&gt;'
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+    get:
+      summary: Obtiene un trabajo diario identificado por un 'IdTrabajoDiario'
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code | Descripción | Motivo                             |
+        | ------------| ------------| -----------------------------------|
+        | **200**     | OK          | Si el trabajo diario existe        |
+        | **404**     | NOT FOUND   | Si no existe el trabajo diario     |
+      operationId: activities_get
+      tags: [Trabajo diario]
+      responses:
+        '200':
+          description: Definición de un Trabajo diario
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
                 $ref: '#/components/schemas/TrabajoDiario'
         '404':
           $ref: '#/components/responses/Response_404'
+    put:
+      summary: Modifica el trabajo diario identificado por un 'IdTrabajoDiario'
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
 
+        | Status Code | Descripción         | Motivo                                          |
+        | ------------| --------------------| ------------------------------------------------|
+        | **209**     | CONTENT RETURNED    | El trabajo diario existía y ha sido actualizado |
+        | **404**     | NOT FOUND           | Si el trabajo diario no existe                  |
+        | **412**     | PRECONDITION FAILED | Si el ETag proporcionado no está actualizado    |
+        | **422**     | UNPROCESSABLE ENTITY| Valor no permitido en alguno de los attributos  |
+      operationId: activities_put
+      parameters:
+        - $ref: '#/components/parameters/ifMatchParam'
+      requestBody:
+        $ref: '#/components/requestBodies/trabajoDiarioUpdate'
+      responses:
+        '209':
+          description: '`CONTENT RETURNED`: el trabajo diario ha sido actualizada'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrabajoDiario'
+        '404':
+          $ref: '#/components/responses/Response_404'
+        '412':
+          $ref: '#/components/responses/Response_412'
+        '422':
+          $ref: '#/components/responses/Response_422'
+    delete:
+      summary: Elimina el trabajo diario identificado po un 'IdTrabajoDiario'
+      description: |
+        La siguiente tabla define los códigos de estado que puede devolver este endpoint
+        
+        | Status Code      | Descripción | Motivo                                        |
+        | ---------------- | ------------| ----------------------------------------------|
+        | **204**          | NO CONTENT  | El trabajo diario existía y ha sido eliminado |
+        | **404**          | NOT FOUND   | Si el trabajo diario no existe                |
+      operationId: activities_delete
+      tags: [Trabajo diario]
+      responses:
+        '204':
+          description: Trabajo diario borrado con éxito &lt;Cuerpo de la respuesta vacío&gt;
+        '404':
+          $ref: '#/components/responses/Response_404'
 components:
   schemas:
     TipoTrabajo:
@@ -417,7 +502,7 @@ components:
     NombreTrabajo:
       type: string
       title: Nombre descriptivo del tipo de trabajo.
-      example: Revision general cada 100000 Km
+      example: Revision general
 
     DescripcionTrabajo:
       type: string
@@ -588,6 +673,46 @@ components:
             properties:
               TrabajoDiario:
                 $ref: '#/components/schemas/TrabajoDiario'
+    trabajoDiarioUpdate:
+      description: Nuevos atributos del trabajo diario
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              FechaInicio:
+                type: string
+                format: date-time
+                title: Fecha de entrega del vehículo al taller. Marca el comienzo del trabajo.
+                description: Fecha de inicio de la actividad
+                example: "2023-04-09T09:30:42Z"
+
+              HorasDedicadas:
+                type: number
+                format: float
+                title: Horas dedicadas al trabajo para acabarlo.
+                example: 5.1
+
+              FechaFin:
+                type: string
+                format: date-time
+                title: Fecha de entrega del vehículo al propietario. Marca la finalización del trabajo.
+                description: Fecha de finalización de la actividad
+                example: "2023-04-12T09:30:42Z"
+
+              RecursosNecesarios:
+                type: array
+                items: 
+                  type: integer
+                title: Array de identificadores de los recursos necesarios para realizar el trabajo.
+                example: [3, 1212, 83]
+
+              EstadoTrabajo:
+                type: string
+                enum: [CREADO, PLANIFICADO, INICIADO, TERMINADO]
+                title: Estado actual del trabajo.
+                        
               
 
   parameters:
@@ -613,3 +738,10 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/VINCoche'
+    IdTrabajoDiario:
+      name: trabajoDiario_id
+      in: path
+      description: Identificador único de un trabajo diario
+      required: true
+      schema:
+        $ref: '#/components/schemas/IdTrabajoDiario'
