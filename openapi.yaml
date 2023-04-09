@@ -323,6 +323,7 @@ paths:
         | **412**     | PRECONDITION FAILED | Si el ETag proporcionado no está actualizado    |
         | **422**     | UNPROCESSABLE ENTITY| Valor no permitido en alguno de los attributos  |
       operationId: activities_put
+      tags: [Trabajo diario]
       parameters:
         - $ref: '#/components/parameters/ifMatchParam'
       requestBody:
