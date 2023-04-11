@@ -16,9 +16,10 @@ paths:
       summary: Obtiene todos los tipos de trabajos existentes.
       description: |
           La siguiente tabla define los códigos de estado que puede devolver este endpoint
-          (suponer que hay tabla, lol)
-          **200** -> OK -> Listado de tipos de trabajo |
-          **404** -> NOT_FOUND -> No se encuentra el listado de tipos de trabajo |
+          | Status Code | Descripción | Motivo                             |
+          | ------------| ------------| -----------------------------------|
+          | **200**     | OK          | Si existe el listado de tipos de trabajos         |
+          | **404**     | NOT FOUND   | Si no se encuentra un listado de tipos de trabajo     |
       operationId: activityTypes_cget
       tags: [Tipos de trabajo]
       responses:
