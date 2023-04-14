@@ -1,0 +1,20 @@
+version: "3.8"
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "aos_swagger_ui"
+    ports:
+      - "8000:8080"
+    volumes:
+      - ./openapi:/aos swaggerapi/swagger-ui
+    environment:
+      SWAGGER_JSON: /aos/openapi.yaml
+      # API_URL: ""
+  
+  prism:
+    image: stoplight/prism:4
+    command: 'mock --cors -h 0.0.0.0 "/aos/openapi.yaml”'
+    volumes:
+      - ./:/aos stoplight/prism:4
+    ports:
+      - '8080:4010'
