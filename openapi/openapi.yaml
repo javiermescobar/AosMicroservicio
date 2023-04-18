@@ -11,7 +11,7 @@ tags:
   - name: Trabajo diario
     description: Los trabajos que se pueden realizar a diario en el taller, un trabajo diario corresponde a un tipo de trabajo.
 paths:
-  /activityTypes:
+  /tipos-trabajo:
     get:
       summary: Obtiene todos los tipos de trabajos existentes.
       description: |
@@ -20,7 +20,7 @@ paths:
           | ------------| ------------| -----------------------------------|
           | **200**     | OK          | Si existe el listado de tipos de trabajos         |
           | **404**     | NOT FOUND   | Si no se encuentra un listado de tipos de trabajo     |
-      operationId: activityTypes_cget
+      operationId: get-tipos-trabajo
       tags: [Tipos de trabajo]
       responses:
         '200':
@@ -38,6 +38,14 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/TipoTrabajo'
+                  links:
+                    description: Enlaces de contenido
+                    readOnly: true
+                    type: object
+                    properties:
+                      link:
+                        $ref: '#/components/schemas/Link'
+
               examples:
                 tiposTrabajo-examples:
                   $ref: '#/components/examples/tiposTrabajo-examples'
@@ -78,13 +86,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TipoTrabajo'
+                type: object
+                properties:
+                  tipoTrabajo:
+                      $ref: '#/components/schemas/TipoTrabajo'
+                  link:
+                    $ref: '#/components/schemas/Link'
         '400':
           $ref: '#/components/responses/Response_400'
         '422':
           $ref: '#/components/responses/Response_422'
   
-  /activityTypes/{IdTipoActividad}:
+  /tipos-trabajo/{IdTipoActividad}:
     parameters:
       - $ref: '#/components/parameters/IdTipoTrabajo'
     options:
@@ -118,7 +131,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TipoTrabajo'
+                type: object
+                properties:
+                  tipoTrabajo:
+                      $ref: '#/components/schemas/TipoTrabajo'
+                  links:
+                    description: Enlaces de contenido
+                    readOnly: true
+                    type: object
+                    properties:
+                      link:
+                        $ref: '#/components/schemas/Link'
         '404':
           $ref: '#/components/responses/Response_404'
     delete:
@@ -159,7 +182,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TipoTrabajo'
+                type: object
+                properties:
+                  tipoTrabajo:
+                      $ref: '#/components/schemas/TipoTrabajo'
+                  link:
+                    $ref: '#/components/schemas/Link'
         '404':
           $ref: '#/components/responses/Response_404'
         '412':
@@ -202,7 +230,17 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TrabajoDiario'
+                  type: object
+                  properties:
+                    trabajoDiario:
+                        $ref: '#/components/schemas/TrabajoDiario'
+                    links:
+                      description: Enlaces de contenido
+                      readOnly: true
+                      type: object
+                      properties:
+                        link:
+                          $ref: '#/components/schemas/Link'
         '404':
           $ref: '#/components/responses/Response_404'
     post:
@@ -230,12 +268,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrabajoDiario'
+                type: object
+                properties:
+                  trabajoDiario:
+                      $ref: '#/components/schemas/TrabajoDiario'
+                  link:
+                    $ref: '#/components/schemas/Link'
         '400':
           $ref: '#/components/responses/Response_400'
         '422':
           $ref: '#/components/responses/Response_422'
-
   /TrabajosSegunCoche/{CarVIN}:
     parameters:
       - $ref: "#/components/parameters/CarVIN"
@@ -270,9 +312,18 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TrabajoDiario'
+                type: object
+                properties:
+                  tiposTrabajo:
+                    description: array de tipos de trabajo diario
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        tipoTrabajo: 
+                          $ref: '#/components/schemas/TrabajoDiario'
+                        links:
+                          $ref: '#/components/schemas/Link'
         '404':
           $ref: '#/components/responses/Response_404'
   /TrabajoDiario/{IdTrabajoDiario}:
@@ -281,7 +332,7 @@ paths:
     options:
       summary: Proporciona la lista de los métodos HTTP soportados por esta ruta.
       description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados (separados por comas).
-      operationId: activity_coptions
+      operationId: activity_options
       tags: [Trabajo diario]
       responses:
         '204':
@@ -309,7 +360,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrabajoDiario'
+                type: object
+                properties:
+                  tiposTrabajo:
+                    $ref: '#/components/schemas/TrabajoDiario'
+                  link:
+                    $ref: '#/components/schemas/Link'
         '404':
           $ref: '#/components/responses/Response_404'
     put:
@@ -335,7 +391,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TrabajoDiario'
+                type: object
+                properties:
+                  trabajoDiario:
+                      $ref: '#/components/schemas/TrabajoDiario'
+                  link:
+                    $ref: '#/components/schemas/Link'
         '404':
           $ref: '#/components/responses/Response_404'
         '412':
@@ -394,7 +455,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TrabajoDiario'
+                  type: object
+                  properties:
+                    tipoTrabajo:
+                        $ref: '#/components/schemas/TrabajoDiario'
+                    link:
+                      $ref: '#/components/schemas/Link'
         '404':
           $ref: '#/components/responses/Response_404'
   /TrabajoDiarioRecursos/{IdRecurso}:
@@ -433,7 +499,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TrabajoDiario'
+                  type: object
+                  properties:
+                    tipoTrabajo:
+                        $ref: '#/components/schemas/TrabajoDiario'
+                    link:
+                      $ref: '#/components/schemas/Link'
         '404':
           $ref: '#/components/responses/Response_404'
         
@@ -458,7 +529,9 @@ components:
               $ref: '#/components/schemas/DescripcionTrabajo'
           example: { "tipoTrabajo" : { "IdTipoTrabajo": "0991",
                                  "NombreTrabajo": "Revisión de fluídos", 
-                                 "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc"}}
+                                 "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc"},
+                      
+              }
 
     TrabajoDiario:
       title: 'Actividad diaria en un taller 🔧'
@@ -472,48 +545,47 @@ components:
         es decir, la razón por la que el cliente trae el coche al taller,
         recursos necesarios para realizar la actividad...
       type: object
+      required: [IdTrabajoDiario, IdTipoTrabajo, NombreTrabajo, DescripcionTrabajo,
+                  MotivoTrabajo, FechaInicio,RecursosNecesarios,
+                  EstadoTrabajo, VINCoche]
       properties:
-        trabajoDiario:
-          type: object
-          required: [IdTrabajoDiario, IdTipoTrabajo, NombreTrabajo, DescripcionTrabajo,
-                      MotivoTrabajo, FechaInicio,RecursosNecesarios,
-                      EstadoTrabajo, VINCoche]
-          properties:
-            IdTrabajoDiario:
-              $ref: '#/components/schemas/IdTrabajoDiario'
-            IdTipoTrabajo:
-              $ref: '#/components/schemas/IdTipoTrabajo'
-            NombreTrabajo:
-              $ref: '#/components/schemas/NombreTrabajo'
-            DescripcionTrabajo:
-              $ref: '#/components/schemas/DescripcionTrabajo'
-            MotivoTrabajo:
-              $ref: '#/components/schemas/MotivoTrabajo'
-            FechaInicio:
-              $ref: '#/components/schemas/FechaInicio'
-            HorasDedicadas:
-              $ref: '#/components/schemas/HorasDedicadas'
-            FechaFin:
-              $ref: '#/components/schemas/FechaFin'
-            RecursosNecesarios:
-              $ref: '#/components/schemas/RecursosNecesarios'
-            EstadoTrabajo:
-              $ref: '#/components/schemas/EstadoTrabajo'
-            VINCoche:
-              $ref: '#/components/schemas/VINCoche'
-          example: { "tipoTrabajo" : { "IdTrabajoDiario": "123",
-                                 "IdTipoTrabajo": "0991",
-                                 "NombreTrabajo": "Revisión de fluídos", 
-                                 "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc",
-                                 "MotivoTrabajo": "El cliente alega que su vehículo muestra un indicador en su testigo de anomalía en el nivel de aceite",
-                                 "FechaInicio": "09/03/2023",
-                                 "HorasDedicadas": "2.5",
-                                 "FechaFin": "10/03/2023",
-                                 "RecursosNecesarios": {
-                                                          "IdRecurso1": "214123",
-                                                          "IdRecurso2": "3123"},
-                                 "EstadoTrabajo": "FINALIZADO",
-                                 "VINCoche": "MNCLSFE405W491230"}}
+        IdTrabajoDiario:
+          $ref: '#/components/schemas/IdTrabajoDiario'
+        IdTipoTrabajo:
+          $ref: '#/components/schemas/IdTipoTrabajo'
+        NombreTrabajo:
+          $ref: '#/components/schemas/NombreTrabajo'
+        DescripcionTrabajo:
+          $ref: '#/components/schemas/DescripcionTrabajo'
+        MotivoTrabajo:
+          $ref: '#/components/schemas/MotivoTrabajo'
+        FechaInicio:
+          $ref: '#/components/schemas/FechaInicio'
+        HorasDedicadas:
+          $ref: '#/components/schemas/HorasDedicadas'
+        FechaFin:
+          $ref: '#/components/schemas/FechaFin'
+        RecursosNecesarios:
+          $ref: '#/components/schemas/RecursosNecesarios'
+        EstadoTrabajo:
+          $ref: '#/components/schemas/EstadoTrabajo'
+        VINCoche:
+          $ref: '#/components/schemas/VINCoche'
+      example: {
+                
+                "IdTrabajoDiario": 123,
+                "IdTipoTrabajo": 0991,
+                "NombreTrabajo": "Revision de fluidos",
+                "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, liquido de frenos, etc",
+                "MotivoTrabajo": "El cliente alega que su vehículo muestra un indicador en su testigo de anomalía en el nivel de aceite",
+                "FechaInicio": "2017-07-21T17:32:28Z",
+                "HorasDedicadas": 2.5,
+                "FechaFin": "2017-07-21T17:32:28Z",
+                "RecursosNecesarios": [214123,3123],
+                "EstadoTrabajo": "TERMINADO",
+                "VINCoche": "MNCLSFE405W491230"
+              
+            }
 
     IdTrabajoDiario:
       type: integer
@@ -623,7 +695,29 @@ components:
           format: uri
           description: >
             A URI reference that identifies the specific occurrence of the problem.
-            It may or may not yield further information if dereferenced.      
+            It may or may not yield further information if dereferenced.
+
+    Link:
+      description: Enlace de relación
+      title: 'Link'
+      type: object
+      properties:
+        href:
+          description: URL del enlace
+          type: string
+          format: uri
+          x-faker: internet.url
+        description:
+          description: "Relación del recurso enlazado con el actual."
+          type: string
+          x-faker: lorem.words
+        title:
+          description: "Titulo de la relacion"
+          type: string
+      example:
+        href: http://127.0.0.1:8000/contenido/0991
+        description: 'Ir al contenido 0991'
+        title: 'Contenido 0991'  
   headers:
     ETag:
       description: "Entity Tag (identificador único proporcionado para validación de caché)"
@@ -643,17 +737,35 @@ components:
         format: uri
         x-faker: internet.url
         example:
-          https://example.com/api/v1/tiposTrabajo/0991
+          http://127.0.0.1:80/api/v1/tiposTrabajo/0991
 
   examples:
     tiposTrabajo-examples:
       value:
-        - { "tipoTrabajo" : { "IdTipoTrabajo": "0991",
-                                 "NombreTrabajo": "Revisión de fluídos", 
-                                 "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc"}}
+        - { 
+          "tipoTrabajo" : { "IdTipoTrabajo": "0991",
+                            "NombreTrabajo": "Revisión de fluídos", 
+                            "DescripcionTrabajo": "Comprobación de los niveles de aceite del motor, refrigerante, líquido de frenos, etc"
+                          },
+          "links":{
+            "self":{
+              "href": "http://127.0.0.1:80/api/v1/contenido/0991",
+              "title": "Contenido 0991",
+              "description": "Ir al contenido 0991"
+            }
+          }
+          }
         - { "tipoTrabajo" : { "IdTipoTrabajo": "0992",
                                  "NombreTrabajo": "Limpieza de motor", 
-                                 "DescripcionTrabajo": "Limpieza interna y externa del motor"}}
+                                 "DescripcionTrabajo": "Limpieza interna y externa del motor"},
+            "links":{
+              "self":{
+                "href": "http://127.0.0.1:80/api/v1/contenido/0992",
+                "title": "Contenido 0992",
+                "description": "Ir al contenido 0992"
+              }
+          }
+        }
     response-http-400:
       value:
         type: https://httpstatuses.com/400
@@ -738,6 +850,7 @@ components:
                 $ref: '#/components/schemas/NombreTrabajo'
               DescripcionTrabajo:
                 $ref: '#/components/schemas/DescripcionTrabajo'
+                
     tipoTrabajoUpdate:
       description: Nuevos atributos del tipo de trabajo
       required: true
@@ -757,10 +870,9 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              TrabajoDiario:
-                $ref: '#/components/schemas/TrabajoDiario'
+            $ref: '#/components/schemas/TrabajoDiario'
+
+            
     trabajoDiarioUpdate:
       description: Nuevos atributos del trabajo diario
       required: true
@@ -800,9 +912,6 @@ components:
                 type: string
                 enum: [CREADO, PLANIFICADO, INICIADO, TERMINADO]
                 title: Estado actual del trabajo.
-                        
-              
-
   parameters:
     IdTipoTrabajo:
       name: IdTipoActividad
