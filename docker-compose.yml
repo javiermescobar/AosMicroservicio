@@ -1,18 +1,18 @@
 version: "3"
 
 services:
-    mock_backend:
+    mock_backendTrabajos:
         image: stoplight/prism:latest
-        container_name: aos2023_mock
+        container_name: aos2023Trabajos_mock
         command: mock --cors -h 0.0.0.0 "/aos/openapi.yaml"
         ports:
           - "4010:4010"
         volumes:
             - ./openapi:/aos:ro
 
-    frontend:
+    frontendTrabajos:
         image: swaggerapi/swagger-ui:latest
-        container_name: aos2023_ui
+        container_name: aos2023Trabajos_ui
         ports:
             - "8000:8080"
         environment:
@@ -20,7 +20,121 @@ services:
         volumes:
             - ./openapi:/aos:ro
 
-    proxy:
+    mock_backendClientes:
+        image: stoplight/prism:latest
+        container_name: aos2023Clientes_mock
+        command: mock --cors -h 0.0.0.0 "/aos/clientes/openapi.yaml"
+        ports:
+          - "4011:4010"
+        volumes:
+            - ./openapi:/aos:ro
+
+    frontendClientes:
+        image: swaggerapi/swagger-ui:latest
+        container_name: aos2023Clientes_ui
+        ports:
+            - "8001:8080"
+        environment:
+            SWAGGER_JSON: /aos/clientes/openapi.yaml
+        volumes:
+            - ./openapi:/aos:ro
+
+    mock_backendVehiculos:
+        image: stoplight/prism:latest
+        container_name: aos2023Vehiculos_mock
+        command: mock --cors -h 0.0.0.0 "/aos/vehiculos/openapi.yaml"
+        ports:
+          - "4012:4010"
+        volumes:
+            - ./openapi:/aos:ro
+
+    frontendVehiculos:
+        image: swaggerapi/swagger-ui:latest
+        container_name: aos2023Vehiculos_ui
+        ports:
+            - "8002:8080"
+        environment:
+            SWAGGER_JSON: /aos/vehiculos/openapi.yaml
+        volumes:
+            - ./openapi:/aos:ro
+
+    mock_backendFacturas:
+        image: stoplight/prism:latest
+        container_name: aos2023Facturas_mock
+        command: mock --cors -h 0.0.0.0 "/aos/facturas/openapi.yaml"
+        ports:
+          - "4013:4010"
+        volumes:
+            - ./openapi:/aos:ro
+
+    frontendFacturas:
+        image: swaggerapi/swagger-ui:latest
+        container_name: aos2023Facturas_ui
+        ports:
+            - "8003:8080"
+        environment:
+            SWAGGER_JSON: /aos/facturas/openapi.yaml
+        volumes:
+            - ./openapi:/aos:ro
+
+    mock_backendRecambios:
+        image: stoplight/prism:latest
+        container_name: aos2023Recambios_mock
+        command: mock --cors -h 0.0.0.0 "/aos/recambios/openapi.yaml"
+        ports:
+          - "4014:4010"
+        volumes:
+            - ./openapi:/aos:ro
+
+    frontendRecambios:
+        image: swaggerapi/swagger-ui:latest
+        container_name: aos2023Recambios_ui
+        ports:
+            - "8004:8080"
+        environment:
+            SWAGGER_JSON: /aos/recambios/openapi.yaml
+        volumes:
+            - ./openapi:/aos:ro
+
+    mock_backendNotificaciones:
+        image: stoplight/prism:latest
+        container_name: aos2023Notificaciones_mock
+        command: mock --cors -h 0.0.0.0 "/aos/notificaciones/openapi.yaml"
+        ports:
+          - "4015:4010"
+        volumes:
+            - ./openapi:/aos:ro
+
+    frontendNotificaciones:
+        image: swaggerapi/swagger-ui:latest
+        container_name: aos2023Notificaciones_ui
+        ports:
+            - "8005:8080"
+        environment:
+            SWAGGER_JSON: /aos/notificaciones/openapi.yaml
+        volumes:
+            - ./openapi:/aos:ro
+
+    mock_backendLogs:
+        image: stoplight/prism:latest
+        container_name: aos2023Logs_mock
+        command: mock --cors -h 0.0.0.0 "/aos/logs/openapi.yaml"
+        ports:
+          - "4016:4010"
+        volumes:
+            - ./openapi:/aos:ro
+
+    frontendLogs:
+        image: swaggerapi/swagger-ui:latest
+        container_name: aos2023Logs_ui
+        ports:
+            - "8006:8080"
+        environment:
+            SWAGGER_JSON: /aos/logs/openapi.yaml
+        volumes:
+            - ./openapi:/aos:ro
+
+    proxyLogs:
         image: caddy:latest
         container_name: aos2023_proxy
         volumes:
@@ -29,4 +143,10 @@ services:
         ports:
             - "80:80"
         depends_on:
-            - mock_backend
+            - mock_backendLogs
+            - mock_backendTrabajos
+            - mock_backendNotificaciones
+            - mock_backendRecambios
+            - mock_backendFacturas
+            - mock_backendVehiculos
+            - mock_backendClientes

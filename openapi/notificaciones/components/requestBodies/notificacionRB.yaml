@@ -1,0 +1,15 @@
+description: Información de la nueva Notificación
+required: true
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - id_trabajo
+      properties:
+        id_trabajo:
+          $ref: ../schemas/Id_Trabajo.yaml
+        estado:
+          $ref: ../schemas/Estados_Trabajos.yaml
+        detalle:
+          type: string
